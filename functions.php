@@ -1,9 +1,9 @@
 <?
+include_once("../includes/mysql.php");
 function connectDB(){
-  mysql_connect('localhost', 'tech','dr61q7a');
-  mysql_select_db('tech');
-  echo mysql_error();
+  connect("tech");
 }
+
 function runQuery($query){
   $results = mysql_query($query);
   echo "<BR>".mysql_error()."<BR>";
@@ -15,6 +15,7 @@ function runQuery($query){
   echo "<BR>".mysql_error()."<BR>";
   return $return;
 }
+
 function runShortQuery($query){
   $results = mysql_query($query);
   echo "<BR>".mysql_error()."<BR>";
