@@ -22,7 +22,7 @@ while($dummy = mysql_fetch_row($bar)){
 
 foreach($mealsContainer as $meals){
 
-    $query = "SELECT COUNT(*) from studentMeals where mealId = '$meals[0]'";
+    $query = "SELECT COUNT(*) from studentmeals where mealId = '$meals[0]'";
 
     $foo = mysql_query($query);
 

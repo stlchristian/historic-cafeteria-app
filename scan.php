@@ -70,9 +70,9 @@ if(!empty($_POST['barcode'])){
 
   $mealId = $_COOKIE['mealId'];
 
-  $query = "SELECT studentmeals.tranId FROM studentMeals 
+  $query = "SELECT studentmeals.tranId FROM studentmeals 
 
-            JOIN students ON (students.studentId = studentMeals.studentId)
+            JOIN students ON (students.studentId = studentmeals.studentId)
 
             WHERE students.studentId = '$studentId' and studentmeals.mealId = '$mealId'";
 
@@ -104,7 +104,7 @@ if(!empty($_POST['barcode'])){
 
     $mealId = $_COOKIE['mealId'];
 
-    $query = "INSERT INTO studentMeals(mealId, studentId) VALUES ('$mealId', '$studentId')";
+    $query = "INSERT INTO studentmeals(mealId, studentId) VALUES ('$mealId', '$studentId')";
 
     mysql_query($query);
 
