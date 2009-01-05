@@ -18,13 +18,15 @@ function runQuery($query){
 
 function runShortQuery($query){
   $results = mysql_query($query);
-  echo "<BR>".mysql_error()."<BR>";
+  if(mysql_error())
+  	echo "<BR>".mysql_error()."<BR>";
   while($dummy = mysql_fetch_row($results)){
     if(!empty($dummy)){
       $return = $dummy;
     }
   }
-  echo "<BR>".mysql_error()."<BR>";
+  if(mysql_error())
+  	$return = 'No Such Student';
   return $return;
 }
 ?>
