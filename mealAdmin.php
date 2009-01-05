@@ -59,7 +59,7 @@ if(!empty($_POST['continue'])){
 <? else: ?>
 <? if($loggedIn == true):?>
 <form action="mealAdmin.php" method="post">
-<center> <BR<BR><BR>
+<center> <BR><BR><BR>
 <input type="submit" name="startNew" value="Start a new meal">
 </center>
 <form>
