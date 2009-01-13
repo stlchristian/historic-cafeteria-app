@@ -227,10 +227,8 @@ if(!empty($_POST['barcode'])){
  <BR><BR><BR>
 
   <center><b>Scan ID:</b><BR><input type="text" id="barcode" name="barcode"></center>
-  <center><input type="checkbox" value="1" name="comp" id="comp"> Conmplimentary</center>
+  <center><input type="checkbox" value="1" name="comp" id="comp"> Complimentary</center>
  </form>
- 
-<!--  <center><button onclick="javascript:markComp();">Complimentary</button></center> -->
 <br>
  <center><b><font color="red"><?=$alert?></font></b></center>
 
