@@ -200,7 +200,7 @@ if(!empty($_POST['barcode'])){
     //return false;
     }
     function submitting(){
-    	if(document.getElementById('comp').value == 1){
+    	if(document.getElementById('comp').checked == true){
     		var x = confirm("Are you sure you want to make this meal coplimentary?")
     		if(x == false){
     			document.getElementById('comp').value = 0;
