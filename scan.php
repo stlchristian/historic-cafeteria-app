@@ -136,9 +136,8 @@ if(!empty($_POST['barcode'])){
    if($comp == false){
 	   if($remaining['meals'] == 0){
 	   		$alert = "Faculty must pay: NO MEALS remaining.";
-	   }elseif($remaining['meals'] < 5){
-	   		$alert = "Enjoy your meal. WARNING: $remaining[meals] remain; replinish soon.";
-	   } else {
+	   }
+	    else {
 	   		$left = $remaining['meals'] - 1;
 	   		$update = "UPDATE faculty SET meals = '$left' WHERE facultyId = '$studentId'";
 	   		mysql_query($update);
@@ -151,7 +150,9 @@ if(!empty($_POST['barcode'])){
 		    if(mysql_error()){
 		      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
 		    }else{
-	   			$alert = "Enjoy your meal. Faculty meal has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>Left: $left";
+	   			if($remaining['meals'] < 5)
+	   				$alert = "Enjoy your meal. WARNING: $remaining[meals] remain; replinish soon.";
+		    	else $alert = "Enjoy your meal. Faculty meal has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>Left: $left";
 		    }
 	   }
   	}else{
