@@ -150,8 +150,9 @@ if(!empty($_POST['barcode'])){
 		    if(mysql_error()){
 		      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
 		    }else{
-	   			if($remaining['meals'] < 5)
-	   				$alert = "Enjoy your meal. WARNING: $left remain; replinish soon."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>";
+	   			if($left < 5)
+	   				if ($left==0)$left="NO MEALS"
+	   				$alert = "Enjoy your meal. WARNING: $left remain! Add more meals soon."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>";
 		    	else $alert = "Enjoy your meal. Faculty meal has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>Left: $left";
 		    }
 	   }
