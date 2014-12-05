@@ -1,4 +1,4 @@
-= Historic Cafeteria App =
+# Historic Cafeteria App #
 
 This app was used, once upon a time, to track mealplan useage in the
 SLCC cafeteria. It hasn't been used in years, though. Here it will be
