@@ -93,14 +93,35 @@ if(!empty($_POST['barcode'])){
 	    }
 	
 	  }
-	
+	  
+	  //Read the pictures directory since php is itself case insensitive.
+	  $dir = opendir("../studentpics");
+	  $pic = '';
+	  while($file = readdir($dir)){
+	     //check for the student id in the file name, and then just use that instead.
+	     $found = strpos($file, $studentId);
+		 if($found !== false){
+		   //set up the picture and exit.
+		   $pic = "../studentpics/".$file;
+		   break;
+		 }
+	  }
+	  //close the directory to make things happy.
+	  closedir($dir);
+	  
+	  //If we didnt' find the picture file, show the no pic image.
+	  if($pic == ''){
+	    $pic = "../studentpics/noImageAvailable.jpg";
+	  }
+	  
+	  
 	  if(!empty($hadMeal)){
-	
-	    $alert = "They student number ".$studentId." has already had this meal.";
+	    
+	    $alert = "The student number ".$studentId." has already had this meal.<br><br><img src='../studentpics/".$pic."' height='350px' width='350px' >";
 	
 	  } elseif(empty($mealPlan['mealplan'])) {
 	
-	    $alert = "Student needs to pay. NO MEAL PLAN.";
+	    $alert = "Student needs to pay. NO MEAL PLAN.<br><br><img src='../studentpics/".$pic."' height='350px' width='350px' >";
 	
 	  }else{
 	
@@ -116,7 +137,8 @@ if(!empty($_POST['barcode'])){
 	
 	    } else {
 	
-	      $alert = "Have a nice meal. Student ID has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($mealPlan['firstname'])." ".ucfirst($mealPlan['lastname'])."</font>";
+	      $alert = "Have a nice meal. Student ID has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($mealPlan['firstname'])." ".ucfirst($mealPlan['lastname'])."</font> <br><br><img src='../studentpics/".$pic."' height='350px' width='350px' >";
+	
 	
 	    }
 	
@@ -223,9 +245,9 @@ if(!empty($_POST['barcode'])){
 
 </head>
 
-<body onload="javascript:focusing();setTimeout('redirect()',(1000*60*30));">
+<body onLoad="javascript:focusing();setTimeout('redirect()',(1000*60*30));">
 
- <form id="scanForm" action="scan.php" method="post" onsubmit="return submitting();">
+ <form id="scanForm" action="scan.php" method="post" onSubmit="return submitting();">
 
  <BR><BR><BR>
 
