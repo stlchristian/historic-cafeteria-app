@@ -1,11 +1,8 @@
 <?
 
-//TODO:
-
 session_start();
 
 include('functions.php');
-
 //session_register('beginMeal');
 
 //check if the last 'new meal' time has been retrieved.
@@ -63,63 +60,118 @@ if(isset($_COOKIE['chocolateChip'])){
 
 
 //check if id has been submitted
+$mealId = $_COOKIE['mealId'];
+  if(!empty($_POST['comp']))
+  	$comp = $_POST['comp'];
+  else
+  	$comp = false;
 
 if(!empty($_POST['barcode'])){
 
   $studentId = $_POST['barcode'];
-
-  $mealId = $_COOKIE['mealId'];
-
-  $query = "SELECT studentmeals.tranId FROM studentMeals 
-
-            JOIN students ON (students.studentId = studentMeals.studentId)
-
-            WHERE students.studentId = '$studentId' and studentmeals.mealId = '$mealId'";
-
-  $hadMeal = runShortQuery($query);
-
-  $sql = "SELECT mealplan, lastname, firstname from students where studentId = '$studentId' limit 1";
-
-  $results = mysql_query($sql);
-
-  while($dummy = mysql_fetch_assoc($results)){
-
-    if(!empty($dummy)){
-
-      $mealPlan = $dummy;
-
-    }
-
+  	
+  if($studentId > 100000){
+  
+	  $query = "SELECT studentmeals.tranId FROM studentmeals 
+	
+	            JOIN students ON (students.studentId = studentmeals.studentId)
+	
+	            WHERE students.studentId = '$studentId' and studentmeals.mealId = '$mealId'";
+	
+	  $hadMeal = runShortQuery($query);
+	
+	  $sql = "SELECT mealplan, lastname, firstname from students where studentId = '$studentId' limit 1";
+	
+	  $results = mysql_query($sql);
+	
+	  while($dummy = mysql_fetch_assoc($results)){
+	
+	    if(!empty($dummy)){
+	
+	      $mealPlan = $dummy;
+	
+	    }
+	
+	  }
+	
+	  if(!empty($hadMeal)){
+	
+	    $alert = "They student number ".$studentId." has already had this meal.";
+	
+	  } elseif(empty($mealPlan['mealplan'])) {
+	
+	    $alert = "Student needs to pay. NO MEAL PLAN.";
+	
+	  }else{
+	
+	    $mealId = $_COOKIE['mealId'];
+	
+	    $query = "INSERT INTO studentmeals(mealId, studentId) VALUES ('$mealId', '$studentId')";
+	
+	    mysql_query($query);
+	
+	    if(mysql_error()){
+	
+	      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
+	
+	    } else {
+	
+	      $alert = "Have a nice meal. Student ID has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($mealPlan['firstname'])." ".ucfirst($mealPlan['lastname'])."</font>";
+	
+	    }
+	
+	  }
+  }else {
+  $sql = "SELECT sm.tranId FROM studentmeals as sm 
+          JOIN faculty as f ON (f.facultyId = sm.studentId)
+          WHERE f.facultyId = '$studentId' and sm.mealId = '$mealId'";
+   connectDB();
+   $hadMeal = runShortQuery($sql);
+   //echo '  asdfa  '. $hadMeal;
+   //TODO: Do I need to add error checking for the same person eating the same meal twice or is that allowed?
+   $remainQuery = "SELECT meals, fname, lname FROM faculty where facultyId = '$studentId'";
+   $res = mysql_query($remainQuery);
+   echo mysql_error();
+   $remaining = mysql_fetch_assoc($res);
+   if($comp == false){
+	   if($remaining['meals'] == 0){
+	   		$alert = "Faculty must pay: NO MEALS remaining.";
+	   }
+	    else {
+	   		$left = $remaining['meals'] - 1;
+	   		$update = "UPDATE faculty SET meals = '$left' WHERE facultyId = '$studentId'";
+	   		mysql_query($update);
+	   		if(mysql_error()){
+		      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
+		    }
+	   		$mealId = $_COOKIE['mealId'];
+		    $query = "INSERT INTO studentmeals(mealId, studentId) VALUES ('$mealId', '$studentId')";
+		    mysql_query($query);
+		    if(mysql_error()){
+		      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
+		    }else{
+	   			if($left < 5){
+	   				if ($left==0)$left="NO MEALS";
+	   				$alert = "Enjoy your meal. WARNING: $left remain! Add more meals soon."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>";
+	   			}
+		    	else $alert = "Enjoy your meal. Faculty meal has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>Left: $left";
+		    }
+	   }
+  	}else{
+  		$mealId = $_COOKIE['mealId'];
+	    $query = "INSERT INTO studentmeals(mealId, studentId) VALUES ('$mealId', '$studentId')";
+	    mysql_query($query);
+	    if(mysql_error()){
+	      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
+	    }else{
+   			$alert = "Enjoy your meal. Faculty meal has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($remaining['fname'])." ".ucfirst($remaining['lname'])."</font><br><br>Left: $remaining[meals]";
+	    }
+  	}
   }
-
-  if(!empty($hadMeal)){
-
-    $alert = "They student number ".$studentId." has already had this meal.";
-
-  } elseif(empty($mealPlan['mealplan'])) {
-
-    $alert = "Student needs to pay. NO MEAL PLAN.";
-
-  }else{
-
-    $mealId = $_COOKIE['mealId'];
-
-    $query = "INSERT INTO studentMeals(mealId, studentId) VALUES ('$mealId', '$studentId')";
-
-    mysql_query($query);
-
-    if(mysql_error()){
-
-      $alert = 'Contact the tech department at x1250'."\n\r".mysql_error();
-
-    } else {
-
-      $alert = "Have a nice meal. Student ID has been logged."."<BR><BR>"."<font size='+3'>".ucfirst($mealPlan['firstname'])." ".ucfirst($mealPlan['lastname'])."</font>";
-
-    }
-
-  }
-
+}else if($comp != false){
+	$insert = "insert into studentmeals(mealId, studentId) values ('$mealId', 0000)";
+	mysql_query($insert);
+	echo mysql_error();
 }
 
 ?>
@@ -141,6 +193,27 @@ if(!empty($_POST['barcode'])){
        window.location = 'mealAdmin.php?e=2'
 
     }
+    function markComp(){
+    //var x = confirm("Are you sure you want to make this meal complimentary?")
+    //alert(x)
+    //if(x == true){
+    	document.getElementById('comp').value = 1;
+    //	document.getElementById('scanForm').submit();
+    //}
+    //return false;
+    }
+    function submitting(){
+    	if(document.getElementById('comp').checked == true){
+    		var x = confirm("Are you sure you want to make this meal coplimentary?")
+    		if(x == false){
+    			document.getElementById('comp').value = 0;
+    			return false
+    		}else{
+    			return true
+    		}
+    	}
+    }
+    document.getElementById("comp").value = 0;
 
   //-->
 
@@ -152,14 +225,14 @@ if(!empty($_POST['barcode'])){
 
 <body onload="javascript:focusing();setTimeout('redirect()',(1000*60*30));">
 
- <form action="scan.php" method="post">
+ <form id="scanForm" action="scan.php" method="post" onsubmit="return submitting();">
 
  <BR><BR><BR>
 
   <center><b>Scan ID:</b><BR><input type="text" id="barcode" name="barcode"></center>
-
+  <center><input type="checkbox" value="1" name="comp" id="comp"> Complimentary</center>
  </form>
-
+<br>
  <center><b><font color="red"><?=$alert?></font></b></center>
 
 </body>
